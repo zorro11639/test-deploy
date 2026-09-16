@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # One PR per ecosystem rather than one per package — these move together and each
+      # needs the same build check.
+      next:
+        patterns: ['next', 'eslint-config-next', 'react', 'react-dom', '@types/react*']
+      vitepress:
+        patterns: ['vitepress', 'vitepress-*', 'vue']
+      tooling:
+        patterns: ['prettier', 'eslint', 'typescript', 'vitest', 'husky', 'lint-staged']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

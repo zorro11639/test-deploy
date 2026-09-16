@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# A new push to a PR makes the in-flight run pointless.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# The workflow only reads the repository; nothing here publishes.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, typecheck and unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Prettier
+        run: pnpm format:check
+
+      - name: ESLint
+        run: pnpm lint
+
+      - name: TypeScript
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+  build:
+    name: Build and integration tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The site has to work both nested under a path and served from a domain root;
+        # base-path bugs are invisible in whichever of the two is not exercised.
+        include:
+          - name: nested
+            base_path: /tvmjs
+            site_url: https://walletadapter.org/tvmjs
+          - name: root
+            base_path: ''
+            site_url: https://tvmjs.example
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build (BASE_PATH=${{ matrix.base_path }})
+        run: pnpm build
+        env:
+          BASE_PATH: ${{ matrix.base_path }}
+          SITE_URL: ${{ matrix.site_url }}
+
+      - name: Integration tests
+        run: pnpm test:integration
+        env:
+          BASE_PATH: ${{ matrix.base_path }}
+
+      - name: Upload artifact
+        if: matrix.name == 'nested'
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: dist/
+          retention-days: 7
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Fails only on high and critical. Moderate advisories in build-time-only packages
+      # are tracked through Dependabot rather than blocking every pull request.
+      - name: pnpm audit
+        run: pnpm audit --audit-level high
