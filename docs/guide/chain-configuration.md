@@ -15,15 +15,9 @@ import { createVM } from '@tvmjs/vm';
 const vm = await createVM();
 ```
 
-To run Ethereum rules, pass an explicit `Common`:
-
-```ts
-import { Common, Mainnet } from '@tvmjs/common';
-import { createVM } from '@tvmjs/vm';
-
-// Ethereum Mainnet at its current hardfork, chainId 1
-const vm = await createVM({ common: new Common({ chain: Mainnet }) });
-```
+TVMJS targets TRON execution. Supplying an Ethereum `Common` is intended for compatibility scenarios
+only. For standard Ethereum execution, use upstream `@ethereumjs/vm`. See
+[Migrating from EthereumJS](/guide/migrating-from-ethereumjs) for behavioural differences.
 
 ::: warning This changed in 1.1.0
 In 1.0.0 the default was chainId 1 combined with the TRON hardfork. `new Common({ chain: Mainnet })`

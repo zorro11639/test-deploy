@@ -5,28 +5,33 @@ parameters are not.
 
 ## Parameters
 
-| Parameter              | Ethereum               | TRON                              |
-| ---------------------- | ---------------------- | --------------------------------- |
-| Metering unit          | gas                    | energy                            |
-| Stack limit            | 1024                   | **64**                            |
-| Call/create forwarding | EIP-150 (63/64 rule)   | full available energy (version 0) |
-| Contract deployment    | EIP-3860 word metering | `200 × code length + base`        |
-| Runtime code size      | EIP-170 limit          | no limit                          |
-| Initcode size          | EIP-3860 limit         | no limit                          |
+| Parameter              | Ethereum protocol      | TRON                                             |
+| ---------------------- | ---------------------- | ------------------------------------------------ |
+| Metering unit          | gas                    | energy                                           |
+| Call depth limit       | 1024                   | **64** (default in TVMJS)                        |
+| Operand stack limit    | 1024                   | 1024                                             |
+| Call/create forwarding | EIP-150 (63/64 rule)   | requested energy up to all available (version 0) |
+| Contract deployment    | EIP-3860 word metering | `200 × code length + base`                       |
+| Runtime code size      | EIP-170 limit          | no limit                                         |
+| Initcode size          | EIP-3860 limit         | no limit                                         |
 
 Every TRON-specific opcode has its own energy cost.
 
-## The 64-slot stack
+## The 64-level call depth limit
 
-This is the difference most likely to surprise you. Bytecode that compiles and runs on the EVM can
-overflow TRON's stack — deep expression trees and large inline structs are the usual causes. A
-contract that works in an Ethereum test suite is not automatically valid on TRON.
+Under default TVM parameters, the maximum contract call depth (the limit on nested `CALL`,
+`CALLCODE`, `DELEGATECALL`, `STATICCALL`, `CALLTOKEN`, `CREATE`, and `CREATE2`) is **64**, compared
+to the Ethereum protocol's 1024. Contracts or recursive call patterns that rely on deeper call
+stacks will fail on TRON. Note that with default TVM options this limit applies across all built-in
+profiles (unless overridden via `params`), while the EVM/TVM **operand stack** remains 1024 items.
 
 ## Energy forwarding
 
-TRON version-0 `CALL` and `CREATE` forward the **full available energy** to the callee, where
-Ethereum reserves 1/64 for the caller. A contract that relies on having energy left after a failing
-subcall behaves differently on the two chains.
+Under TRON version-0 rules, the CALL and CREATE families (including `CALL`, `CALLCODE`,
+`DELEGATECALL`, `STATICCALL`, `CALLTOKEN`, `CREATE`, and `CREATE2`) forward the requested energy
+**up to all available energy** (`min(requested, available)`), without applying Ethereum's EIP-150
+rule which reserves 1/64 for the caller. A contract that relies on having 1/64 energy left after a
+failing subcall behaves differently on the two chains.
 
 Ethereum EIP-150 forwarding is preserved on Ethereum hardfork paths.
 

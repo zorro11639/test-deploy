@@ -268,6 +268,13 @@ describe('no leaked configuration', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('exposes no internal hostname', () => {
+    const extraHostPattern = process.env.INTERNAL_HOST_PATTERN ? `|${process.env.INTERNAL_HOST_PATTERN}` : '';
+    const pattern = new RegExp(`\\.internal\\b|\\.corp\\b|\\.local\\b${extraHostPattern}`, 'i');
+    const offenders = textFiles().filter((file) => pattern.test(read(file)));
+    expect(offenders).toEqual([]);
+  });
+
   it('ships no sourcemap of the site source', () => {
     // Sourcemaps would publish the full TSX tree; the export should not emit them.
     expect(allFiles().filter((file) => file.endsWith('.map') && !file.startsWith('docs/'))).toEqual([]);

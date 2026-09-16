@@ -24,26 +24,29 @@ The EVM package is called **`@tvmjs/tvm`**, and its factory is `createTVM()`.
 
 ## Behaviour that differs under TRON rules
 
-These apply when the chain profile is TRON. On Ethereum hardfork paths the upstream behaviour is
-preserved.
+Most TRON-specific behaviour (such as address derivation, EIP-150 energy forwarding, and contract
+size limits) is gated on the chain profile or hardfork. However, with default TVM parameters and
+the default precompile registry, TVM instances enforce a **call-depth limit of 64** across all
+built-in chain profiles (unless overridden via `params`), and TRON's precompiles (`0x03`, `0x09`,
+`0x0a`) remain active regardless of the selected chain (unless modified via `customPrecompiles`).
 
-| Area                          | Ethereum                       | TRON                                  |
-| ----------------------------- | ------------------------------ | ------------------------------------- |
-| Metering unit                 | gas                            | [energy](/tron/energy)                |
-| Stack depth                   | 1024                           | 64                                    |
-| `CREATE` address              | RLP(sender, nonce)             | root transaction ID + owner address   |
-| `CREATE2` preimage            | `0xff`                         | [`0x41`](/tron/addresses)             |
-| Address on the stack          | 20 bytes                       | 21 bytes                              |
-| Call/create energy forwarding | EIP-150 (63/64)                | full available energy (version 0)     |
-| Runtime code size             | EIP-170 limit                  | no limit                              |
-| Initcode size                 | EIP-3860 limit + word metering | no limit                              |
-| Token transfer                | —                              | [TRC-10 opcodes](/tron/token-opcodes) |
+| Area                          | Ethereum protocol              | TRON                                               |
+| ----------------------------- | ------------------------------ | -------------------------------------------------- |
+| Metering unit                 | gas                            | [energy](/tron/energy)                             |
+| Call depth limit              | 1024                           | 64 (default in TVMJS)                              |
+| `CREATE` address              | RLP(sender, nonce)             | root transaction ID + owner address                |
+| `CREATE2` preimage            | `0xff`                         | [`0x41`](/tron/addresses)                          |
+| Address on the stack          | 20 bytes                       | 21 bytes                                           |
+| Call/create energy forwarding | EIP-150 (63/64)                | requested energy up to all available (CALL/CREATE) |
+| Runtime code size             | EIP-170 limit                  | no limit                                           |
+| Initcode size                 | EIP-3860 limit + word metering | no limit                                           |
+| Token transfer                | —                              | [TRC-10 opcodes](/tron/token-opcodes)              |
 
 ## Additions with no upstream equivalent
 
 - **TRC-10 opcodes** `CALLTOKEN`, `TOKENBALANCE`, `CALLTOKENVALUE`, `CALLTOKENID`, `ISCONTRACT`.
 - **TRON precompiles** `BatchValidateSign` (`0x09`) and `ValidateMultiSign` (`0x0a`), plus TRON's
-  `RIPEMD-160` and `BLAKE2F` variants.
+  `RIPEMD-160` variant at `0x03`.
 - **Account fields** `asset` (TRC-10 balances) and `activePermissions`.
 - **`tokenId` / `tokenValue`** on `Message` and on the signed legacy transaction format.
 - **`rootTransactionId`** as execution context.

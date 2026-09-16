@@ -1,16 +1,22 @@
 # Precompiled Contracts
 
-TRON adds signature and permission precompiles, and changes two hash precompiles.
+TRON adds signature and permission precompiles, and overrides the `0x03` hash precompile.
 
 ## TRON precompiles
 
-| Address   | Name                | Description                                |
-| --------- | ------------------- | ------------------------------------------ |
-| `0x09`    | `BatchValidateSign` | Validate a batch of signatures in one call |
-| `0x0a`    | `ValidateMultiSign` | Validate a multi-signature permission      |
-| `0x03`    | `RIPEMD-160`        | TRON-specific double hash                  |
-| `0x20003` | `RIPEMD-160`        | TVM-specific variant                       |
-| `0x20009` | `BLAKE2F`           | TVM-specific compression                   |
+| Address   | Name                | Status       | Description                                                     |
+| --------- | ------------------- | ------------ | --------------------------------------------------------------- |
+| `0x09`    | `BatchValidateSign` | Active       | Validate a batch of signatures in one call                      |
+| `0x0a`    | `ValidateMultiSign` | Active       | Validate a multi-signature permission                           |
+| `0x03`    | `RIPEMD-160`        | Active       | TRON-specific double hash: `sha256(sha256(input)[0:20])`        |
+| `0x20003` | `RIPEMD-160`        | Unregistered | TVM-specific variant (source exists, not registered by default) |
+
+::: warning Unregistered precompile addresses
+Source files for `0x20003` (RIPEMD-160) and `0x20009` (BLAKE2F) exist in the codebase but are
+**not yet registered** in the precompile table by default. Calling them executes as a standard
+account call (loading code from `StateManager`, or returning empty output if no code is deployed)
+rather than executing the precompile.
+:::
 
 ## Input bounds
 

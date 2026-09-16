@@ -25,21 +25,21 @@ yarn add @tvmjs/tvm @tvmjs/util
 
 :::
 
-The [transaction example](#run-a-transaction) below needs three more — the execution context, the
-chain configuration and the transaction types:
+The [transaction example](#run-a-transaction) below needs two more — the execution context and the
+transaction types:
 
 ::: code-group
 
 ```bash [npm]
-npm install @tvmjs/vm @tvmjs/common @tvmjs/tx
+npm install @tvmjs/vm @tvmjs/tx
 ```
 
 ```bash [pnpm]
-pnpm add @tvmjs/vm @tvmjs/common @tvmjs/tx
+pnpm add @tvmjs/vm @tvmjs/tx
 ```
 
 ```bash [yarn]
-yarn add @tvmjs/vm @tvmjs/common @tvmjs/tx
+yarn add @tvmjs/vm @tvmjs/tx
 ```
 
 :::
@@ -71,27 +71,27 @@ configuration (chainId `728126428`, hardfork `tron`). This changed in 1.1.0 — 
 
 ## Run a transaction
 
-`@tvmjs/vm` adds the transaction and block layer on top of the interpreter.
+`@tvmjs/vm` adds the transaction and block layer on top of the interpreter. By default, `createVM()`
+uses the `TronMainnet` configuration.
 
 ```ts
-import { Common, Hardfork, Mainnet } from '@tvmjs/common';
 import { createLegacyTx } from '@tvmjs/tx';
-import { createZeroAddress } from '@tvmjs/util';
+import { createZeroAddress, hexToBytes } from '@tvmjs/util';
 import { createVM, runTx } from '@tvmjs/vm';
 
 const main = async () => {
-  const common = new Common({ chain: Mainnet, hardfork: Hardfork.Shanghai });
-  const vm = await createVM({ common });
+  const vm = await createVM();
 
-  const tx = createLegacyTx({
-    gasLimit: BigInt(21000),
-    gasPrice: BigInt(1000000000),
-    value: BigInt(1),
-    to: createZeroAddress(),
-    v: BigInt(37),
-    r: BigInt('62886504200765677832366398998081608852310526822767264927793100349258111544447'),
-    s: BigInt('21948396863567062449199529794141973192314514851405455194940751428901681436138'),
-  });
+  // Create a transaction bound to the VM's Common configuration
+  const tx = createLegacyTx(
+    {
+      gasLimit: 21000n,
+      gasPrice: 1000000000n,
+      value: 1n,
+      to: createZeroAddress(),
+    },
+    { common: vm.common }
+  ).sign(hexToBytes('0x4646464646464646464646464646464646464646464646464646464646464646'));
 
   const res = await runTx(vm, { tx, skipBalance: true });
   console.log(res.totalGasSpent); // 21000n
