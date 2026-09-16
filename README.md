@@ -60,11 +60,10 @@ Everything deployment-specific is an environment variable with a default that re
 the current deployment, so a clean clone builds without any configuration. Copy
 `.env.example` to `.env` to change them locally.
 
-| Variable            | Default                           | Effect                                                    |
-| ------------------- | --------------------------------- | --------------------------------------------------------- |
-| `BASE_PATH`         | `/tvmjs`                          | Where the site is mounted. Empty means the origin root    |
-| `SITE_URL`          | `https://walletadapter.org/tvmjs` | Origin used for `canonical` and Open Graph URLs           |
-| `NEXT_PUBLIC_GA_ID` | _(empty)_                         | Google Analytics measurement ID. Empty ships no analytics |
+| Variable            | Default   | Effect                                                    |
+| ------------------- | --------- | --------------------------------------------------------- |
+| `BASE_PATH`         | `/tvmjs`  | Where the site is mounted. Empty means the origin root    |
+| `NEXT_PUBLIC_GA_ID` | _(empty)_ | Google Analytics measurement ID. Empty ships no analytics |
 
 `BASE_PATH` drives the Next.js `basePath`, the VitePress `base` (always `${BASE_PATH}/docs/`),
 the dev proxy's routing and the preview server at once. To serve the whole thing from a
