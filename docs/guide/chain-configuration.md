@@ -15,8 +15,9 @@ import { createVM } from '@tvmjs/vm';
 const vm = await createVM();
 ```
 
-TVMJS targets TRON execution. Supplying an Ethereum `Common` is intended for compatibility scenarios
-only. For standard Ethereum execution, use upstream `@ethereumjs/vm`. See
+TVMJS targets TRON execution. This release retains some Ethereum execution paths inherited from
+EthereumJS, but they are not a long-term compatibility target and may change or be removed in a
+future release. For Ethereum execution, use upstream `@ethereumjs/vm`. See
 [Migrating from EthereumJS](/guide/migrating-from-ethereumjs) for behavioural differences.
 
 ::: warning This changed in 1.1.0

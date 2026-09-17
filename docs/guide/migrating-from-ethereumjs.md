@@ -18,9 +18,12 @@ The EVM package is called **`@tvmjs/tvm`**, and its factory is `createTVM()`.
 ## The default chain is TRON
 
 `createVM()` and `createTVM()` default to the execution-only `TronMainnet` configuration
-(chainId `728126428`, hardfork `tron`) rather than Ethereum Mainnet. Pass
-`new Common({ chain: Mainnet })` for Ethereum rules. See
-[Chain Configuration](/guide/chain-configuration).
+(chainId `728126428`, hardfork `tron`) rather than Ethereum Mainnet. Some Ethereum execution paths
+inherited from EthereumJS remain in this release. TVMJS is developed and tested for TRON execution,
+however, and does not guarantee Ethereum compatibility in future releases. For Ethereum execution,
+use upstream `@ethereumjs/vm`.
+
+For TRON presets and network configuration, see [Chain Configuration](/guide/chain-configuration).
 
 ## Behaviour that differs under TRON rules
 

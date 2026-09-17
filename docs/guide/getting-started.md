@@ -145,7 +145,7 @@ See [Events and Tracing](/guide/events-and-tracing) for the full event list.
 
 ## Next steps
 
-- [Chain Configuration](/guide/chain-configuration) — picking TRON or Ethereum rules, hardforks and
-  network proposals.
+- [Chain Configuration](/guide/chain-configuration) — TRON network presets, hardforks and network
+  proposals.
 - [Executing Code](/guide/execution) — which of `runCode`, `runCall`, `runTx` and `runBlock` you want.
 - [TRON Semantics](/tron/overview) — the behaviour that differs from the EVM.
