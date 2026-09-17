@@ -47,5 +47,4 @@ the two halves always agree about where they are mounted.
 
 ## Licence
 
-The documentation source is MIT, like the rest of this repository. TVMJS itself is
-MPL-2.0 — see [NOTICE](../NOTICE).
+The documentation source is [MIT](../LICENSE), like the rest of this repository.

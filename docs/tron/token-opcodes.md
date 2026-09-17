@@ -15,12 +15,30 @@ make that visible to contract code.
 
 ## Token IDs are range-checked, not existence-checked
 
-`CALLTOKEN` and `TOKENBALANCE` validate only that the token ID is **in range**. A valid but unissued
-ID continues execution or returns zero — it does not fail, and it does not require
-`StateManager.tokenIdExists()`.
+`CALLTOKEN` and `TOKENBALANCE` validate only that the token ID is **in range**. They do not require
+`StateManager.tokenIdExists()` and do not reject an ID just because it is unissued. Within the
+precision limit below, an unissued ID continues execution or returns zero.
 
 This matches `java-tron`. Code written against 1.0.0 that expected an unissued ID to throw will see
 different behaviour.
+
+## Token ID precision limit in 1.1.0 {#token-id-precision-limit}
+
+::: warning Range validation does not guarantee lossless token IDs
+TVMJS 1.1.0 accepts token IDs within the protocol's signed 64-bit range, but converts IDs to
+JavaScript `number` values when accessing account token balances. IDs above
+`Number.MAX_SAFE_INTEGER` (`9007199254740991`) can lose precision: different IDs can resolve to
+the same balance key, causing incorrect balance reads or transfers.
+
+Applications should reject IDs above this limit before passing them to TVMJS. Validate the original
+integer using `bigint` or another lossless representation, before converting it to `number`.
+Passing a `bigint` alone does not avoid TVMJS's internal conversion. This additional upper bound
+does not replace the existing protocol range checks.
+
+Contract execution can also produce token IDs internally. If execution accesses IDs above this
+limit, do not rely on its token balances or transfer results, even if the initial inputs passed
+validation. This is a current implementation limitation, not a restriction of the TRON protocol.
+:::
 
 ## Transfers at the message level
 

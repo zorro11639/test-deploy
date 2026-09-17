@@ -3,6 +3,11 @@
 TRON meters execution in **energy** rather than gas. The accounting shape is the same; the
 parameters are not.
 
+::: tip Local simulation
+TVMJS energy accounting may differ from `java-tron`. Simulation results do not guarantee actual
+on-chain energy consumption; verify against the target network before relying on them in production.
+:::
+
 ## Parameters
 
 | Parameter              | Ethereum protocol      | TRON                                             |

@@ -148,5 +148,4 @@ formatted by Prettier through a pre-commit hook.
 This repository — the site and documentation source — is [MIT](LICENSE) licensed.
 
 TVMJS itself is a derivative work of EthereumJS and is released under the **MPL-2.0**
-licence in [its own repository](https://github.com/tronweb3/tvmjs-monorepo). See
-[NOTICE](NOTICE) for why the two differ and for the font licensing.
+licence in [its own repository](https://github.com/tronweb3/tvmjs-monorepo).

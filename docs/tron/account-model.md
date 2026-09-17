@@ -17,6 +17,18 @@ interface Account {
 
 Token balances live beside the TRX balance, keyed by token ID.
 
+::: warning Token ID precision in 1.1.0
+Balance amounts are `bigint`, but TVMJS 1.1.0 converts token IDs to JavaScript `number` values
+when accessing balances. IDs above `Number.MAX_SAFE_INTEGER` (`9007199254740991`) can lose
+precision and resolve to the same balance key as a different ID. Using `bigint` for an input ID
+does not avoid this internal conversion.
+
+Reject IDs above this limit before passing them to TVMJS, using a lossless representation for
+validation. Do not rely on balance or transfer results if contract execution produces such IDs
+internally. See [Token ID precision limit in 1.1.0](/tron/token-opcodes#token-id-precision-limit)
+for the current limitation and input validation guidance.
+:::
+
 This changes emptiness: **`account.isEmpty()` returns `false` when the account holds a non-zero
 TRC-10 balance**, even if nonce, balance and code are all zero. An account holding only tokens is
 not empty and will not be cleaned up as if it were.
@@ -42,8 +54,8 @@ permission.
 `StateManagerInterface` gains `tokenIdExists(tokenId: number)`.
 
 ::: tip Not required for the token opcodes
-`CALLTOKEN` and `TOKENBALANCE` deliberately do **not** call it — they range-check the ID instead, so
-a valid but unissued token continues or returns zero. See
+`CALLTOKEN` and `TOKENBALANCE` deliberately do **not** call it — they range-check the ID instead.
+Within the precision limit described above, a valid but unissued token continues or returns zero. See
 [TRC-10 Token Opcodes](/tron/token-opcodes#token-ids-are-range-checked-not-existence-checked).
 :::
 

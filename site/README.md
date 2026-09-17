@@ -51,5 +51,4 @@ treatments — the integration tests at the repo root assert both.
 
 ## Fonts
 
-Inter and Wix Madefor Display load from Google Fonts. No font binary is committed here; see
-[NOTICE](../NOTICE) for why.
+Inter and Wix Madefor Display load from Google Fonts. No font binary is committed here.

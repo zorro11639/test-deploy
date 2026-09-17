@@ -61,6 +61,6 @@ security impact, follow [SECURITY.md](SECURITY.md) instead of opening a public i
 
 ## Licence
 
-By contributing you agree that your contribution is licensed under the MIT Licence, the
-same terms as the rest of this repository. See [NOTICE](NOTICE) for how that relates to
-TVMJS's own MPL-2.0 licence.
+By contributing you agree that your original contribution is licensed under the MIT Licence,
+the same terms as the rest of this repository. Third-party content retains its original licence;
+preserve its applicable copyright and licence notices.
