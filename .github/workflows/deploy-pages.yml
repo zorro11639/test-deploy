@@ -34,7 +34,7 @@ jobs:
 
       - name: Configure GitHub Pages
         id: pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
         with:
           # Project pages (no custom domain) are served under /<repo>/, so the Next.js
           # export needs that same base path baked into its asset URLs.
